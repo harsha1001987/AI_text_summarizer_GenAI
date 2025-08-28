@@ -8,7 +8,7 @@ def count_tokens(text):
     # Simple approximation: split by whitespace
     return len(text.split())
 
-def summarize_text(text, style="concise"):
+def summarize_text(text, style="concise", top_p=0.8):
     prompt = (
         f"Summarize the following text in a {style} manner.\n"
         f"Text: {text}\n"
@@ -16,7 +16,8 @@ def summarize_text(text, style="concise"):
     )
     headers = {"Content-Type": "application/json"}
     data = {
-        "contents": [{"parts": [{"text": prompt}]}]
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"topP": top_p}
     }
     response = requests.post(
         f"{ENDPOINT}?key={API_KEY}",
@@ -31,6 +32,6 @@ def summarize_text(text, style="concise"):
 
 if __name__ == "__main__":
     input_text = "Artificial Intelligence is transforming industries by automating tasks, improving efficiency, and enabling new capabilities."
-    summary = summarize_text(input_text, style="detailed")
+    summary = summarize_text(input_text, style="detailed", top_p=0.7)
     print("Summary:", summary)
 
