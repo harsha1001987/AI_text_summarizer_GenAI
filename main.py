@@ -4,6 +4,10 @@ import requests
 API_KEY = os.getenv("GEMINI_API_KEY")
 ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
 
+def count_tokens(text):
+    # Simple approximation: split by whitespace
+    return len(text.split())
+
 def summarize_text(text, style="concise"):
     prompt = (
         f"Summarize the following text in a {style} manner.\n"
@@ -20,6 +24,9 @@ def summarize_text(text, style="concise"):
         json=data
     )
     result = response.json()
+    # Log token count
+    token_count = count_tokens(prompt)
+    print(f"Tokens used in prompt: {token_count}")
     return result['candidates'][0]['content']['parts'][0]['text']
 
 if __name__ == "__main__":
