@@ -1,7 +1,6 @@
-import os
 import requests
 
-API_KEY = os.getenv("GEMINI_API_KEY")  # Load from environment variable
+API_KEY = "YOUR_GEMINI_API_KEY"
 ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
 
 def summarize_text(text):
