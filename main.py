@@ -1,11 +1,18 @@
 import os
 import requests
 
-API_KEY = os.getenv("GEMINI_API_KEY")  # Load from environment variable
+API_KEY = os.getenv("GEMINI_API_KEY")
 ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
 
 def summarize_text(text):
-    prompt = f"Summarize the following text:\n{text}"
+    prompt = (
+        "Summarize the following text.\n"
+        "Example:\n"
+        "Text: Machine learning enables computers to learn from data and make predictions.\n"
+        "Summary: Computers can use data to learn and predict outcomes.\n"
+        f"Text: {text}\n"
+        "Summary:"
+    )
     headers = {"Content-Type": "application/json"}
     data = {
         "contents": [{"parts": [{"text": prompt}]}]
