@@ -1,5 +1,6 @@
 import os
 import requests
+import json
 
 API_KEY = os.getenv("GEMINI_API_KEY")
 ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
@@ -11,6 +12,7 @@ def count_tokens(text):
 def summarize_text(text, style="concise", top_p=0.8, temperature=0.5, top_k=40):
     prompt = (
         f"Summarize the following text in a {style} manner.\n"
+        f"Return the summary in JSON format with a 'summary' key.\n"
         f"Text: {text}\n"
         "Summary:"
     )
@@ -32,7 +34,13 @@ def summarize_text(text, style="concise", top_p=0.8, temperature=0.5, top_k=40):
     # Log token count
     token_count = count_tokens(prompt)
     print(f"Tokens used in prompt: {token_count}")
-    return result['candidates'][0]['content']['parts'][0]['text']
+    # Parse structured output
+    summary_text = result['candidates'][0]['content']['parts'][0]['text']
+    try:
+        summary_json = json.loads(summary_text)
+        return summary_json['summary']
+    except Exception:
+        return summary_text
 
 if __name__ == "__main__":
     input_text = "Artificial Intelligence is transforming industries by automating tasks, improving efficiency, and enabling new capabilities."
