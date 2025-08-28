@@ -9,7 +9,7 @@ def count_tokens(text):
     # Simple approximation: split by whitespace
     return len(text.split())
 
-def summarize_text(text, style="concise", top_p=0.8, temperature=0.5, top_k=40):
+def summarize_text(text, style="concise", top_p=0.8, temperature=0.5, top_k=40, stop_sequences=None):
     prompt = (
         f"Summarize the following text in a {style} manner.\n"
         f"Return the summary in JSON format with a 'summary' key.\n"
@@ -17,13 +17,17 @@ def summarize_text(text, style="concise", top_p=0.8, temperature=0.5, top_k=40):
         "Summary:"
     )
     headers = {"Content-Type": "application/json"}
+    generation_config = {
+        "topP": top_p,
+        "temperature": temperature,
+        "topK": top_k
+    }
+    if stop_sequences:
+        generation_config["stopSequences"] = stop_sequences
+
     data = {
         "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {
-            "topP": top_p,
-            "temperature": temperature,
-            "topK": top_k
-        }
+        "generationConfig": generation_config
     }
     response = requests.post(
         f"{ENDPOINT}?key={API_KEY}",
@@ -44,6 +48,7 @@ def summarize_text(text, style="concise", top_p=0.8, temperature=0.5, top_k=40):
 
 if __name__ == "__main__":
     input_text = "Artificial Intelligence is transforming industries by automating tasks, improving efficiency, and enabling new capabilities."
-    summary = summarize_text(input_text, style="detailed", top_p=0.7, temperature=0.7, top_k=50)
+    # Example stop sequence: stop generation at "}"
+    summary = summarize_text(input_text, style="detailed", top_p=0.7, temperature=0.7, top_k=50, stop_sequences=["}"])
     print("Summary:", summary)
 
